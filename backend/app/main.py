@@ -19,6 +19,23 @@ async def startup_event():
     print(f"✅ Primary Model: {settings.OPENROUTER_MODELS[0] if settings.OPENROUTER_MODELS else 'None'}")
 
 
+# Set all CORS enabled origins
+origins = [
+    "http://localhost:5173",
+    "https://yt-notes-ai-tan.vercel.app",
+]
+
+# CORSMiddleware must be the FIRST middleware added to ensure CORS headers
+# are added to ALL responses, including those from other middlewares or errors.
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+    expose_headers=["*"],
+)
+
 @app.middleware("http")
 async def log_requests(request, call_next):
     import time
@@ -33,8 +50,6 @@ async def log_requests(request, call_next):
         process_time = time.time() - start_time
         print(f"ERROR: {request.method} {request.url.path} - 500 Internal Server Error ({process_time:.4f}s)")
         traceback.print_exc()
-        # Return a JSONResponse here instead of raising. 
-        # This will be processed by any middleware wrapping this one.
         from fastapi.responses import JSONResponse
         return JSONResponse(
             status_code=500,
@@ -44,24 +59,6 @@ async def log_requests(request, call_next):
                 "type": type(e).__name__
             }
         )
-
-
-# Set all CORS enabled origins
-origins = [
-    "http://localhost:5173",
-    "https://yt-notes-ai-tan.vercel.app"
-]
-
-# CORSMiddleware is added AFTER the custom middleware, 
-# making it the OUTER layer (it wraps log_requests).
-# This ensures it can add CORS headers even if log_requests returns a 500 response.
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
 
 
 @app.get("/api/v1/health")
