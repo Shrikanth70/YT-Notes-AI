@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { API_BASE_URL } from '../config';
+
 import { useAuth } from '../context/AuthContext';
 import { toast } from 'react-hot-toast';
 import { 
@@ -14,8 +16,6 @@ import {
 import { motion, useScroll, useSpring } from 'framer-motion';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const NoteDetailView: React.FC = () => {
     const { id } = useParams<{ id: string }>();

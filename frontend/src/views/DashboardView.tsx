@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
+import { API_BASE_URL } from '../config';
+
 import { useAuth } from '../context/AuthContext';
 import { toast } from 'react-hot-toast';
 import { 
@@ -19,8 +21,6 @@ import {
     X
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const DashboardView: React.FC = () => {
     const { session } = useAuth();

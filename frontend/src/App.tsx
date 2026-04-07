@@ -12,6 +12,8 @@ import DashboardView from './views/DashboardView';
 import NoteDetailView from './views/NoteDetailView';
 import ProfileView from './views/ProfileView';
 import AdminView from './views/AdminView';
+import { API_BASE_URL } from './config';
+
 
 const NavBar = () => {
     const { user, session, signOut } = useAuth();
@@ -19,7 +21,7 @@ const NavBar = () => {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const location = useLocation();
     const navigate = useNavigate();
-    const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 
     useEffect(() => {
         const fetchProfile = async () => {

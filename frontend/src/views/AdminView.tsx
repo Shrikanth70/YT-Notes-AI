@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { API_BASE_URL } from '../config';
+
 import { useAuth } from '../context/AuthContext';
 import { Search, User, Shield, Zap, Activity, Users, Download, X } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 
 interface UserOverview {
     id: string;

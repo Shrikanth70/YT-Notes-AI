@@ -2,10 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { Mail, Shield, FileText, Clock, Edit2, Check, X, Sparkles } from 'lucide-react';
 import axios from 'axios';
+import { API_BASE_URL } from '../config';
+
 import toast from 'react-hot-toast';
 import { motion } from 'framer-motion';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 
 interface UserProfile {
     id: string;
