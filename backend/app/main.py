@@ -49,8 +49,7 @@ async def log_requests(request, call_next):
 # Set all CORS enabled origins
 origins = [
     "http://localhost:5173",
-    "http://localhost:5174",
-    "http://localhost:5175",
+    "https://yt-notes-ai-tan.vercel.app/"
 ]
 
 # CORSMiddleware is added AFTER the custom middleware, 
