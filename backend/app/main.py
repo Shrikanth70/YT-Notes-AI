@@ -19,17 +19,14 @@ async def startup_event():
     print(f"✅ Primary Model: {settings.OPENROUTER_MODELS[0] if settings.OPENROUTER_MODELS else 'None'}")
 
 
-# Set all CORS enabled origins
-origins = [
-    "http://localhost:5173",
-    "https://yt-notes-ai-tan.vercel.app",
-]
 
-# CORSMiddleware must be the FIRST middleware added to ensure CORS headers
-# are added to ALL responses, including those from other middlewares or errors.
+# Set all CORS enabled origins
+# Using regex to allow any .vercel.app subdomain and localhost
+allow_origin_regex = r"https://.*\.vercel\.app|http://localhost:5173"
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origin_regex=allow_origin_regex,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -40,15 +37,16 @@ app.add_middleware(
 async def log_requests(request, call_next):
     import time
     start_time = time.time()
+    origin = request.headers.get("origin")
     try:
         response = await call_next(request)
         process_time = time.time() - start_time
-        print(f"INFO: {request.method} {request.url.path} - {response.status_code} ({process_time:.4f}s)")
+        print(f"INFO: {request.method} {request.url.path} - {response.status_code} - Origin: {origin} ({process_time:.4f}s)")
         return response
     except Exception as e:
         import traceback
         process_time = time.time() - start_time
-        print(f"ERROR: {request.method} {request.url.path} - 500 Internal Server Error ({process_time:.4f}s)")
+        print(f"ERROR: {request.method} {request.url.path} - 500 - Origin: {origin} ({process_time:.4f}s)")
         traceback.print_exc()
         from fastapi.responses import JSONResponse
         return JSONResponse(
