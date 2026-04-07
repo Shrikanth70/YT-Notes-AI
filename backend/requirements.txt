@@ -10,3 +10,4 @@ httpx
 youtube-transcript-api
 crewai
 langchain-openai
+email-validator
