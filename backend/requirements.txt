@@ -10,4 +10,6 @@ httpx
 youtube-transcript-api
 crewai
 langchain-openai
-email-validator
+pydantic[email]
+reportlab
+markdown2
