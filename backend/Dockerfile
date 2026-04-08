@@ -13,13 +13,18 @@ WORKDIR /app
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     curl \
+    rustc \
+    cargo \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
+# Set Cargo home to a writable directory to avoid "Read-only file system" errors
+ENV CARGO_HOME=/tmp/cargo
+
 # Install Python dependencies
 COPY requirements.txt .
-RUN pip install --no-cache-dir --upgrade pip setuptools wheel \
-    && pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir --upgrade pip setuptools wheel
+RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy the rest of the application
 COPY . .

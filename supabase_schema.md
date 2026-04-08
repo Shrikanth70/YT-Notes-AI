@@ -189,6 +189,8 @@ create table if not exists public.profiles (
   updated_at timestamptz not null default now()
 );
 
+-- Drop trigger if it exists first, then recreate
+drop trigger if exists set_profiles_updated_at on public.profiles;
 create trigger set_profiles_updated_at
 before update on public.profiles
 for each row
@@ -213,6 +215,8 @@ create table if not exists public.usage_quotas (
   updated_at timestamptz not null default now()
 );
 
+-- Drop trigger if it exists first, then recreate
+drop trigger if exists set_usage_quotas_updated_at on public.usage_quotas;
 create trigger set_usage_quotas_updated_at
 before update on public.usage_quotas
 for each row
@@ -258,6 +262,8 @@ create table if not exists public.notes (
   constraint notes_markdown_not_empty check (char_length(trim(markdown_content)) > 0)
 );
 
+-- Drop trigger if it exists first, then recreate
+drop trigger if exists set_notes_updated_at on public.notes;
 create trigger set_notes_updated_at
 before update on public.notes
 for each row
@@ -311,6 +317,8 @@ create table if not exists public.note_jobs (
   updated_at timestamptz not null default now()
 );
 
+-- Drop trigger if it exists first, then recreate
+drop trigger if exists set_note_jobs_updated_at on public.note_jobs;
 create trigger set_note_jobs_updated_at
 before update on public.note_jobs
 for each row
@@ -335,13 +343,14 @@ create table if not exists public.note_exports (
 -- 13. SECURITY / AUDIT LOGS
 -- ---------------------------------------------------------
 create table if not exists public.security_logs (
-  id bigint generated always as identity primary key,
+  id uuid primary key default gen_random_uuid(),
   user_id uuid references auth.users(id) on delete set null,
 
   event_type text not null,
-  ip_address inet,
+  ip_address text, -- Model uses String, inet is also fine but keeping String for compatibility
   user_agent text,
-  metadata jsonb not null default '{}'::jsonb,
+  details jsonb not null default '{}'::jsonb,
+  status text, -- Added missing field from model
 
   created_at timestamptz not null default now()
 );

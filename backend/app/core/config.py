@@ -13,7 +13,11 @@ class Settings(BaseSettings):
     SUPABASE_JWT_SECRET: str
 
     OPENROUTER_API_KEY: str | None = None
-    OPENROUTER_MODELS: List[str] = ["nvidia/nemotron-3-super-120b-a12b:free", "qwen/qwen3.6-plus:free", "google/gemma-7b-it:free"]
+    OPENROUTER_MODELS: List[str] = [
+        "nvidia/nemotron-3-super-120b-a12b:free", 
+        "google/gemma-2-9b-it:free",
+        "mistralai/mistral-7b-instruct:free"
+    ]
 
     CORS_ORIGINS: str = "http://localhost:5173,http://localhost:5174,http://localhost:5175"
 
