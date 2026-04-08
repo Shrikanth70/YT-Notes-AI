@@ -59,6 +59,16 @@ async def log_requests(request, call_next):
         )
 
 
+@app.get("/")
+def read_root():
+    return {
+        "message": f"{settings.APP_NAME} is Live 🚀",
+        "version": settings.APP_VERSION,
+        "docs": "/docs",
+        "health": "/api/v1/health"
+    }
+
+
 @app.get("/api/v1/health")
 def health_check():
     return {"status": "ok", "version": settings.APP_VERSION}
