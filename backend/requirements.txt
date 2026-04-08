@@ -13,4 +13,4 @@ langchain-openai
 pydantic[email]
 reportlab
 markdown2
-tiktoken==0.8.0
+tiktoken==0.7.0
