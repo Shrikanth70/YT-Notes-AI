@@ -53,26 +53,27 @@ class NoteService:
             if settings.OPENROUTER_API_KEY:
                 os.environ["OPENROUTER_API_KEY"] = settings.OPENROUTER_API_KEY.strip()
 
-            # 3. Direct generation with first free model
+            # 3. Direct generation with fallback loop
             last_error = ""
             final_notes = ""
-            actual_model_used = "Unknown"
+            actual_model_used = "None"
 
-            current_model = models_to_try[0]
-            print(f"🚀 [STARTING] AI Note Generation")
+            for current_model in models_to_try:
+                try:
+                    print(f"🚀 [TRYING] AI Note Generation with {current_model}")
+                    
+                    notes_agent = Agent(
+                        role="Precise AI Content Generator & Translator",
+                        goal=f"Translate and summarize YouTube content into high-quality, {style} markdown notes using safe, simple English.",
+                        backstory="Expert AI content editor specialized in clear English translation and simplified educational summaries.",
+                        llm=current_model,
+                        verbose=False,
+                        allow_delegation=False,
+                    )
 
-            notes_agent = Agent(
-                role="Precise AI Content Generator & Translator",
-                goal=f"Translate and summarize YouTube content into high-quality, {style} markdown notes using safe, simple English.",
-                backstory="Expert AI content editor specialized in clear English translation and simplified educational summaries.",
-                llm=current_model,
-                verbose=False,
-                allow_delegation=False,
-            )
+                    safe_transcript = transcript_text[:30000]
 
-            safe_transcript = transcript_text[:30000]
-
-            prompt = f"""
+                    prompt = f"""
 Generate comprehensive, detailed markdown notes from the following YouTube transcript.
 
 REQUIRED STRUCTURE:
@@ -103,18 +104,27 @@ Transcript:
 {safe_transcript}
 """
 
-            notes_task = Task(
-                description=prompt,
-                expected_output="Structured markdown notes from the transcript.",
-                agent=notes_agent,
-            )
+                    notes_task = Task(
+                        description=prompt,
+                        expected_output="Structured markdown notes from the transcript.",
+                        agent=notes_agent,
+                    )
 
-            crew = Crew(agents=[notes_agent], tasks=[notes_task], verbose=False)
+                    crew = Crew(agents=[notes_agent], tasks=[notes_task], verbose=False)
 
-            result = crew.kickoff()
-            final_notes = str(result)
-            actual_model_used = current_model
-            print(f"✅ [SUCCESS] Notes generated successfully")
+                    result = crew.kickoff()
+                    if result:
+                        final_notes = str(result)
+                        actual_model_used = current_model
+                        print(f"✅ [SUCCESS] Notes generated successfully with {current_model}")
+                        break
+                except Exception as model_e:
+                    last_error = str(model_e)
+                    print(f"⚠️ [MODEL FAILED] {current_model}: {last_error}")
+                    continue
+
+            if not final_notes:
+                raise ValueError(f"All configured models failed to generate notes. Last error: {last_error}")
 
             # 4. Save Results (Pulse session)
             db = SessionLocal()

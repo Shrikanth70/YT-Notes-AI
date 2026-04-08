@@ -14,9 +14,10 @@ class Settings(BaseSettings):
 
     OPENROUTER_API_KEY: str | None = None
     OPENROUTER_MODELS: List[str] = [
-        "nvidia/nemotron-3-super-120b-a12b:free", 
-        "google/gemma-2-9b-it:free",
-        "mistralai/mistral-7b-instruct:free"
+        "meta-llama/llama-3.2-3b-instruct:free",
+        "google/gemini-2.0-flash-lite-preview-02-05:free",
+        "mistralai/mistral-7b-instruct:free",
+        "microsoft/phi-3-mini-128k-instruct:free"
     ]
 
     CORS_ORIGINS: str = "http://localhost:5173,http://localhost:5174,http://localhost:5175"
